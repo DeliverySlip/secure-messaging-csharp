@@ -1,0 +1,16 @@
+app.config
+/TestResults
+/bin
+/obj
+/.vs
+
+*.suo
+*.user
+_ReSharper.*
+bin
+obj
+packages
+
+# Confirmation required
+LICENSE.md
+CONTRIBUTING.md
