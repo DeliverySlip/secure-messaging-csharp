@@ -11,7 +11,7 @@ namespace SecureMessaging.Utils
 
         public static String GetBuildVersion()
         {
-            return "2.1.0";
+            return "2.2.0";
         }
     }
 }
