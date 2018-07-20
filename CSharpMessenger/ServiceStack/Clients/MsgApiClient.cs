@@ -6,11 +6,11 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using CSharpMessenger.ServiceStack.Entities;
-using CSharpMessenger.ServiceStack.Services;
+using SecureMessaging.ServiceStack.Entities;
+using SecureMessaging.ServiceStack.Services;
 using ServiceStack;
 
-namespace CSharpMessenger.ServiceStack.Clients
+namespace SecureMessaging.ServiceStack.Clients
 {
     public class MsgApiClient : JsonServiceClient
     {

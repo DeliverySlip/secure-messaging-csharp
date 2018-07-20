@@ -29,11 +29,11 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ServiceStack;
 using ServiceStack.DataAnnotations;
-using CSharpMessenger.ServiceStack.Entities;
-using CSharpMessenger.ServiceStack.Services;
+using SecureMessaging.ServiceStack.Entities;
+using SecureMessaging.ServiceStack.Services;
 
 
-namespace CSharpMessenger.ServiceStack.Entities
+namespace SecureMessaging.ServiceStack.Entities
 {
 
     public partial class AdditionalDownloadInformation
@@ -1235,7 +1235,7 @@ namespace CSharpMessenger.ServiceStack.Entities
     }
 }
 
-namespace CSharpMessenger.ServiceStack.Services
+namespace SecureMessaging.ServiceStack.Services
 {
 
     [Route("/v1/labels/{LabelGuid}/attachments/{AttachmentGuid}", "POST")]

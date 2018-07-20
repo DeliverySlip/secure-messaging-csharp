@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSharpMessenger.SecureMessaging.Auth
+namespace SecureMessaging.Auth
 {
     class Endpoints
     {

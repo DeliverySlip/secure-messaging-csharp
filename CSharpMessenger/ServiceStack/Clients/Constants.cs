@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSharpMessenger.ServiceStack.Clients
+namespace SecureMessaging.ServiceStack.Clients
 {
     public class HeaderConstants
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CSharpMessenger.SecureMessaging.CCC;
+using SecureMessaging.CCC;
 
 namespace CSharpMessengerTests
 {

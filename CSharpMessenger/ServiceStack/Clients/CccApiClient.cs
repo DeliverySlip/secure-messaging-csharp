@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using ServiceStack;
 using ServiceStack.Text;
 
-namespace CSharpMessenger.ServiceStack.Clients
+namespace SecureMessaging.ServiceStack.Clients
 {
     public class CccApiClient
     {

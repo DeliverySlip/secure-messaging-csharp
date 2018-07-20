@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using ServiceStack;
 using ServiceStack.Text;
-using CSharpMessenger.SecureMessaging.Auth;
+using SecureMessaging.Auth;
 using System.Net;
 
-namespace CSharpMessenger.SecureMessaging.CCC
+namespace SecureMessaging.CCC
 {
 	public class ServiceCodeResolver
 	{

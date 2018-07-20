@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CSharpMessenger.ServiceStack.Entities;
-using CSharpMessenger.ServiceStack.Services;
+using SecureMessaging.ServiceStack.Entities;
+using SecureMessaging.ServiceStack.Services;
 using ServiceStack;
 
-namespace CSharpMessenger.SecureMessaging.Search
+namespace SecureMessaging.Search
 {
     public class SearchMessagesResults : IReadOnlyCollection<MessageSummary>
     {

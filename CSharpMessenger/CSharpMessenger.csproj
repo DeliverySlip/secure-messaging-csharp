@@ -53,6 +53,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SecureMessaging\Auth\MessagingApiClient.cs" />
+    <Compile Include="SecureMessaging\SecureMessageFactory.cs" />
+    <Compile Include="SecureMessaging\Utils\BuildVersion.cs" />
     <Compile Include="ServiceStack\Clients\CccApiClient.cs" />
     <Compile Include="ServiceStack\Clients\Constants.cs" />
     <Compile Include="ServiceStack\Clients\MsgApiClient.cs" />

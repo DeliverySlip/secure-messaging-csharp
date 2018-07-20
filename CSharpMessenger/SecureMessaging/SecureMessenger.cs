@@ -6,81 +6,112 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using CSharpMessenger.SecureMessaging.Auth;
-using CSharpMessenger.SecureMessaging.CCC;
-using CSharpMessenger.SecureMessaging.Enums;
-using CSharpMessenger.ServiceStack.Entities;
-using CSharpMessenger.ServiceStack.Services;
+using SecureMessaging.Auth;
+using SecureMessaging.CCC;
+using SecureMessaging.Enums;
+using SecureMessaging.ServiceStack.Entities;
+using SecureMessaging.ServiceStack.Services;
 using ServiceStack;
-using CSharpMessenger.SecureMessaging.Search;
+using SecureMessaging.Search;
+using SecureMessaging.Utils;
+using SecureMessaging.Attachment;
 
-namespace CSharpMessenger.SecureMessaging
+namespace SecureMessaging
 {
 	public class SecureMessenger
 	{
 
-		private JsonServiceClient client;
 		private Session Session;
-
-		private String ClientName = "csharp-secure-messenger";
-		private String ClientVersion = "2.1.0";
+        private MessagingApiClient client;
 
 		private Mutex GetMessageMutex = new Mutex();
 
 		public static SecureMessenger ResolveFromServiceCode(String serviceCode)
 		{
 			String baseURL = ServiceCodeResolver.Resolve(serviceCode);
-			return new SecureMessenger(baseURL);
+            return new SecureMessenger(baseURL);
 		}
 
-		private void ConfigureClient()
-		{
-            global::ServiceStack.Text.JsConfig.DateHandler = global::ServiceStack.Text.DateHandler.ISO8601;
-            global::ServiceStack.Text.JsConfig.AssumeUtc = true;
-            global::ServiceStack.Text.JsConfig.AppendUtcOffset = false;
-
-			this.client.Headers.Add("x-sm-client-name", ClientName);
-			this.client.Headers.Add("x-sm-client-version", ClientVersion);
-			
-		}
-
-		public void SetClientName(String clientName)
-		{
-			this.ClientName = clientName;
-			this.client.Headers.Add("x-sm-client-name", ClientName);
-		}
-
-		public void SetClientVersion(String clientVersion)
-		{
-			this.ClientVersion = clientVersion;
-			this.client.Headers.Add("x-sm-client-version", ClientVersion);
-		}
-
+        /// <summary>
+        /// Create a SecureMessenger with a Messaging API endpoint. You will login using the 
+        /// SecureMessenger instance
+        /// </summary>
+        /// <param name="baseURL"></param>
 		public SecureMessenger(String baseURL)
 		{
-			this.client = new JsonServiceClient(baseURL);
-			ConfigureClient();
+            this.client = new MessagingApiClient(baseURL);
 		}
 
-		public SecureMessenger(JsonServiceClient client)
+        /// <summary>
+        /// Create a SecureMessenger using a MessagingApiClient. You will login using the
+        /// SecureMessenger instance
+        /// </summary>
+        /// <param name="client"></param>
+		public SecureMessenger(MessagingApiClient client)
 		{
-			
 			this.client = client;
-			ConfigureClient();
 		}
 
-		public void Login(Credentials credentials)
+        /// <summary>
+        /// Create a SecureMessenger with an existing session. This means you have logged in independently
+        /// of the SecureMessenger class
+        /// </summary>
+        /// <param name="session">The Session object representing your connection with the
+        /// Messaging API</param>
+        public SecureMessenger(Session session)
+        {
+            this.Session = session;
+            this.client = session.Client;
+        }
+
+        public void SetClientName(String clientName)
+        {
+
+            if(this.Session == null)
+            {
+                this.client.SetClientName(clientName);
+            }else
+            {
+                this.Session.Client.SetClientName(clientName);
+            }
+            
+        }
+
+        public void SetClientVersion(String clientVersion)
+        {
+            if(this.Session == null)
+            {
+                this.client.SetClientVersion(clientVersion);
+            }else
+            {
+                this.Session.Client.SetClientVersion(clientVersion);
+            }
+        }
+
+        /// <summary>
+        /// Login to the Secure Messaging API, this assumes you have not logged in previously
+        /// before instantiating the SecureMessenger. Calling login is not necessary if
+        /// the SecureMessenger was instantiated with a Session object. If you call login,
+        /// and you have logged in already, your previous session will be overwritten with
+        /// the new one which the SecureMessenger will create
+        /// </summary>
+        /// <param name="credentials"></param>
+        public void Login(Credentials credentials)
 		{
-			this.Session = SessionFactory.createSession(credentials, this.client);
-			//this.client.Headers.Add("x-sm-session-token", this.Session.SessionToken);
-		}
+			this.Session = SessionFactory.CreateSession(credentials, this.client);
+        }
 
 		public void Logout()
 		{
-			var resp = client.Post(new Logout() { });
+			var resp = this.Session.Client.Post(new Logout() { });
 			this.Session = null;
-			this.client.Headers.Remove("x-sm-session-token");
+			this.Session.Client.Headers.Remove("x-sm-session-token");
 		}
+
+        public AttachmentManager CreateAttachmentManagerForMessage(Message message)
+        {
+            return new AttachmentManager(message, this.Session);
+        }
 
         public Message PreCreateMessage(PreCreateConfiguration configuration)
         {
@@ -96,8 +127,8 @@ namespace CSharpMessenger.SecureMessaging
                 req.Password = configuration.GetPassword();
             }
 
-            //this.client.Headers.Add("x-sm-session-token", this.Session.SessionToken);
-            var response = this.client.Post(req);
+
+            var response = this.Session.Client.Post(req);
 
             Message message = new Message();
             message.MessageGuid = response.MessageGuid;
@@ -121,8 +152,7 @@ namespace CSharpMessenger.SecureMessaging
 				req.Password = password;
 			}
 
-			//this.client.Headers.Add("x-sm-session-token", this.Session.SessionToken);
-			var response = this.client.Post(req);
+            var response = this.Session.Client.Post(req);
 
 			Message message = new Message();
 			message.MessageGuid = response.MessageGuid;
@@ -134,9 +164,8 @@ namespace CSharpMessenger.SecureMessaging
 		public PingResponse Ping()
 		{
 			var req = new Ping();
-			var response = client.Get(req);
+			var response = this.Session.Client.Get(req);
 			
-			//return client.Get<PingResponse>(string.Format("{0}{1}", _baseApiUri, req.ToGetUrl()));//ping is unversioned... so it cannot use the versioned url
 			return response;
 		}
 
@@ -166,7 +195,7 @@ namespace CSharpMessenger.SecureMessaging
 				ExpiryGroup = message.ExpiryGroup
 			};
 
-			var response = client.Put(req);
+			var response = this.Session.Client.Put(req);
 			message.MessageSaved = true;
 
 			return message;
@@ -185,7 +214,7 @@ namespace CSharpMessenger.SecureMessaging
 				SendEmailNotification = message.SendNotification
 			};
 
-			var response = client.Put(req);
+			var response = this.Session.Client.Put(req);
 			message.MessageSent = true;
 
 			return message;
@@ -195,77 +224,22 @@ namespace CSharpMessenger.SecureMessaging
 		public Message UploadAttachmentsForMessage(Message message, IEnumerable<FileInfo> attachments)
 		{
 
-			//allocate server resources for passed in attachments needing uploading
-			var preCreateAttachmentPlaceholders = new List<PreCreateAttachmentPlaceholder>();
+            AttachmentManager attachmentManager = new AttachmentManager(message, this.Session);
 
-			foreach (var attachment in attachments)
-			{
-				preCreateAttachmentPlaceholders.Add(new PreCreateAttachmentPlaceholder() { FileName = attachment.Name, TotalBytesLength = attachment.Length });
-			}
+            foreach(var attachment in attachments)
+            {
+                attachmentManager.AddAttachmentFile(attachment);
+            }
 
-			//api call to allocate
-			var preCreateRequest = new PreCreateAttachments()
-			{
-				MessageGuid = message.MessageGuid,
-				AttachmentPlaceholders = preCreateAttachmentPlaceholders
-			};
+            attachmentManager.PreCreateAllAttachments();
+            attachmentManager.UploadAllAttachments();
 
-			var response = client.Post(preCreateRequest);
-			var attachmentPlaceholders = response.AttachmentPlaceholders;
+            message.UploadedAttachments = attachmentManager.GetAllPreCreatedAttachments();
+            message.AttachmentsAdded = true;
 
-			//process each placeholder, find the correct matching file, and upload
-			foreach (var attachmentPlaceholder in attachmentPlaceholders)
-			{
-				FileInfo attachmentFileInfo = attachments.Where(a => a.Name.Equals(attachmentPlaceholder.FileName)).First();
-				UploadAttachment(attachmentPlaceholder, attachmentFileInfo);
+            return message;
 
-			}
-
-			message.UploadedAttachments = attachmentPlaceholders;
-			message.AttachmentsAdded = true;
-			return message;
-
-		}
-
-		private void UploadAttachment(AttachmentPlaceholder attachmentPlaceholder, FileInfo attachment )
-		{
-
-			//open the attachment and read it out and chunks to be uploaded
-			using (var fs = File.OpenRead(attachment.FullName))
-			{
-				foreach (var chunk in attachmentPlaceholder.Chunks)
-				{
-
-					//create a buffer the same size as the chunk
-					byte[] buffer = new byte[chunk.BytesSize];
-					//use the chunks start index to position ourselves in the stream
-					fs.Position = chunk.ByteStartIndex;
-					//read enough data into the chunks buffer
-					fs.Read(buffer, 0, buffer.Length);
-
-					var chunkRequest = new UploadAttachmentChunk()
-					{
-						AttachmentGuid = attachmentPlaceholder.AttachmentGuid,
-						ChunkNumber = chunk.ChunkNumber
-					};
-
-					using (var ms = new MemoryStream(buffer))
-					{
-						try
-						{
-							client.PostFileWithRequest<UploadAttachmentChunk>(ms, attachmentPlaceholder.FileName, chunkRequest);
-						}
-						catch (WebServiceException ex)
-						{
-							Console.WriteLine("ERROR: " + ex.ResponseDto.ToString());
-							throw;
-						}
-
-					}
-				}
-
-			}
-		}
+ 		}
 
 		public void DownloadAttachment(Guid attachmentGuid, String localFolderPath = null, bool? preview = null, String downloadType = null, String downloadFileType = null)
 		{
@@ -277,7 +251,7 @@ namespace CSharpMessenger.SecureMessaging
 				Preview = preview
 			};
 
-			var resp = client.Get<HttpWebResponse>(req);
+			var resp = this.Session.Client.Get<HttpWebResponse>(req);
 			var stream = resp.GetResponseStream();
 			var bytes = stream.ToBytes();
 
@@ -295,7 +269,7 @@ namespace CSharpMessenger.SecureMessaging
 				MessageGuid = message.MessageGuid
 			};
 
-			var response = client.Put(req);
+			var response = this.Session.Client.Put(req);
 
 			message.Extensions = extensions;
 			return message;
@@ -309,9 +283,9 @@ namespace CSharpMessenger.SecureMessaging
                 Filter = searchMessageFilter
             };
 
-            SearchMessagesPagedResponse response = client.Get(req);
+            SearchMessagesPagedResponse response = this.Session.Client.Get(req);
 
-            return new SearchMessagesResults(response, searchMessageFilter, this.client);
+            return new SearchMessagesResults(response, searchMessageFilter, this.Session.Client);
 
 
         }
@@ -328,7 +302,7 @@ namespace CSharpMessenger.SecureMessaging
 				Filter = searchCriteria
 			};
 
-			SearchMessagesPagedResponse response = client.Get(req);
+			SearchMessagesPagedResponse response = this.Session.Client.Get(req);
 			messageSummaries.AddRange(response.Results);
 
 			if (response.TotalPages > 1)
@@ -341,7 +315,7 @@ namespace CSharpMessenger.SecureMessaging
 						Page = i
 					};
 
-					var nextPageResp = client.Get(nextPageReq);
+					var nextPageResp = this.Session.Client.Get(nextPageReq);
 					messageSummaries.AddRange(nextPageResp.Results);
 
 				}
@@ -366,10 +340,10 @@ namespace CSharpMessenger.SecureMessaging
 				{
 					var bytes = System.Text.Encoding.UTF8.GetBytes(password);
 					var base64EncodedString = System.Convert.ToBase64String(bytes);
-					this.client.Headers.Add("x-sm-password", base64EncodedString);
+					this.Session.Client.Headers.Add("x-sm-password", base64EncodedString);
 				}
 
-				var response = this.client.Get(req);
+				var response = this.Session.Client.Get(req);
 
                 Message message = new Message();
                 message.Bcc = response.Bcc.Select(s => s.Email).ToList();
@@ -395,7 +369,7 @@ namespace CSharpMessenger.SecureMessaging
 			}
 			finally
 			{
-				this.client.Headers.Remove("x-sm-password");
+				this.Session.Client.Headers.Remove("x-sm-password");
 				GetMessageMutex.ReleaseMutex();
 			}
 		}

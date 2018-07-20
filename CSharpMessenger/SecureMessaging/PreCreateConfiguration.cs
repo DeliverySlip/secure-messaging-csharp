@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CSharpMessenger.SecureMessaging.Enums;
+using SecureMessaging.Enums;
 
-namespace CSharpMessenger.SecureMessaging
+namespace SecureMessaging
 {
     public class PreCreateConfiguration
     {

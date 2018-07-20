@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CSharpMessenger.SecureMessaging;
-using CSharpMessenger.ServiceStack.Entities;
-using CSharpMessenger.ServiceStack.Services;
-using CSharpMessenger.SecureMessaging.Search;
+using SecureMessaging;
+using SecureMessaging.ServiceStack.Entities;
+using SecureMessaging.ServiceStack.Services;
+using SecureMessaging.Search;
 using System.Collections.Generic;
 
 namespace CSharpMessengerTests

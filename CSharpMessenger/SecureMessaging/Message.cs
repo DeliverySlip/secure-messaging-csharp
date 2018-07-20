@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CSharpMessenger.SecureMessaging.Enums;
-using CSharpMessenger.ServiceStack.Entities;
-using CSharpMessenger.ServiceStack.Services;
+using SecureMessaging.Enums;
+using SecureMessaging.ServiceStack.Entities;
+using SecureMessaging.ServiceStack.Services;
 
-namespace CSharpMessenger.SecureMessaging
+namespace SecureMessaging
 {
 	public class Message
 	{
