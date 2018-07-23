@@ -20,6 +20,11 @@ namespace SecureMessaging.Attachment
 
         private PreCreateAttachmentsResponse preCreateAttatchmentsResponse;
 
+        public AttachmentManager(SavedMessage savedMessage, Session session): this(savedMessage.Message, session)
+        {
+            
+        }
+
         public AttachmentManager(Message message, Session session)
         {
             this.message = message;

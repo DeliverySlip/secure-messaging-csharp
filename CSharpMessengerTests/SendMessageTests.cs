@@ -38,8 +38,8 @@ namespace CSharpMessengerTests
             message.Body = "Hello Test Message From DeliverySlip C# Example";
             message.BodyFormat = BodyFormatEnum.Text;
 
-            message = messenger.SaveMessage(message);
-            messenger.SendMessage(message);
+            SavedMessage savedMessage = messenger.SaveMessage(message);
+            messenger.SendMessage(savedMessage);
 
         }
 
@@ -65,8 +65,8 @@ namespace CSharpMessengerTests
             message.Body = "Hello Test Message From DeliverySlip C# Example";
             message.BodyFormat = BodyFormatEnum.Text;
 
-            message = messenger.SaveMessage(message);
-            messenger.SendMessage(message);
+            SavedMessage savedMessage = messenger.SaveMessage(message);
+            messenger.SendMessage(savedMessage);
         }
 
         [TestMethod]
@@ -86,8 +86,8 @@ namespace CSharpMessengerTests
             message.Body = "Hello Test Message From DeliverySlip C# Example";
             message.BodyFormat = BodyFormatEnum.Text;
 
-            message = messenger.SaveMessage(message);
-            messenger.SendMessage(message);
+            SavedMessage savedMessage = messenger.SaveMessage(message);
+            messenger.SendMessage(savedMessage);
         }
 
         [TestMethod]
@@ -113,8 +113,8 @@ namespace CSharpMessengerTests
             message.MessageOptions.FyeoType = FyeoTypeEnum.AccountPassword;
             message.Password = Password;
 
-            message = messenger.SaveMessage(message);
-            messenger.SendMessage(message);
+            SavedMessage savedMessage = messenger.SaveMessage(message);
+            messenger.SendMessage(savedMessage);
         }
 
         [TestMethod]
@@ -140,8 +140,8 @@ namespace CSharpMessengerTests
             message.MessageOptions.FyeoType = FyeoTypeEnum.UniquePassword;
             message.Password = "password";
 
-            message = messenger.SaveMessage(message);
-            messenger.SendMessage(message);
+            SavedMessage savedMessage = messenger.SaveMessage(message);
+            messenger.SendMessage(savedMessage);
         }
 
         [TestMethod]
@@ -168,8 +168,8 @@ namespace CSharpMessengerTests
             message.InviteNewUsers = true;
             message.SendNotification = true;
 
-            message = messenger.SaveMessage(message);
-            messenger.SendMessage(message);
+            SavedMessage savedMessage = messenger.SaveMessage(message);
+            messenger.SendMessage(savedMessage);
         }
     }
 }

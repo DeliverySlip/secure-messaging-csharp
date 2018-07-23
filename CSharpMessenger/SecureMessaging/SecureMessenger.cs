@@ -108,6 +108,11 @@ namespace SecureMessaging
 			this.Session.Client.Headers.Remove("x-sm-session-token");
 		}
 
+        public AttachmentManager CreateAttachmentManagerForMessage(SavedMessage savedMessage)
+        {
+            return new AttachmentManager(savedMessage, this.Session);
+        }
+
         public AttachmentManager CreateAttachmentManagerForMessage(Message message)
         {
             return new AttachmentManager(message, this.Session);
@@ -169,7 +174,12 @@ namespace SecureMessaging
 			return response;
 		}
 
-		public Message SaveMessage(Message message)
+        public SavedMessage SaveMessage(SavedMessage savedMessage)
+        {
+            return this.SaveMessage(savedMessage.Message);
+        }
+
+		public SavedMessage SaveMessage(Message message)
 		{
 
 			MessageOptions messageOptions = new MessageOptions()
@@ -198,12 +208,14 @@ namespace SecureMessaging
 			var response = this.Session.Client.Put(req);
 			message.MessageSaved = true;
 
-			return message;
+			return new SavedMessage() { Message = message };
 
 		}
 
-		public Message SendMessage(Message message)
+		public Message SendMessage(SavedMessage savedMessage)
 		{
+
+            var message = savedMessage.Message;
 
 			var req = new SendMessage()
 			{
@@ -221,10 +233,10 @@ namespace SecureMessaging
 
 		}
 
-		public Message UploadAttachmentsForMessage(Message message, IEnumerable<FileInfo> attachments)
+		public Message UploadAttachmentsForMessage(SavedMessage savedMessage, IEnumerable<FileInfo> attachments)
 		{
 
-            AttachmentManager attachmentManager = new AttachmentManager(message, this.Session);
+            AttachmentManager attachmentManager = new AttachmentManager(savedMessage, this.Session);
 
             foreach(var attachment in attachments)
             {
@@ -234,10 +246,10 @@ namespace SecureMessaging
             attachmentManager.PreCreateAllAttachments();
             attachmentManager.UploadAllAttachments();
 
-            message.UploadedAttachments = attachmentManager.GetAllPreCreatedAttachments();
-            message.AttachmentsAdded = true;
+            savedMessage.Message.UploadedAttachments = attachmentManager.GetAllPreCreatedAttachments();
+            savedMessage.Message.AttachmentsAdded = true;
 
-            return message;
+            return savedMessage.Message;
 
  		}
 

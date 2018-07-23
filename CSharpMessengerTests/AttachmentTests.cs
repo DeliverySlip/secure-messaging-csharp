@@ -40,16 +40,16 @@ namespace CSharpMessengerTests
             message.Body = "Hello Test Message From DeliverySlip C# Example";
             message.BodyFormat = BodyFormatEnum.Text;
 
-            message = messenger.SaveMessage(message);
+            SavedMessage savedMessage = messenger.SaveMessage(message);
 
             var projectPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
             string filePath = Path.Combine(projectPath, "Resources");
             FileInfo file = new FileInfo(filePath + "/yellow.jpg");
 
-            messenger.UploadAttachmentsForMessage(message, new List<FileInfo>() { file });
+            messenger.UploadAttachmentsForMessage(savedMessage, new List<FileInfo>() { file });
 
-            message = messenger.SaveMessage(message);
-            messenger.SendMessage(message);
+            savedMessage = messenger.SaveMessage(savedMessage);
+            messenger.SendMessage(savedMessage);
 
         }
 
@@ -73,20 +73,20 @@ namespace CSharpMessengerTests
             message.Body = "Hello Test Message From DeliverySlip C# Example";
             message.BodyFormat = BodyFormatEnum.Text;
 
-            message = messenger.SaveMessage(message);
+            SavedMessage savedMessage = messenger.SaveMessage(message);
 
             var projectPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
             string filePath = Path.Combine(projectPath, "Resources");
             FileInfo file = new FileInfo(filePath + "/yellow.jpg");
 
-            AttachmentManager attachmentManager = messenger.CreateAttachmentManagerForMessage(message);
+            AttachmentManager attachmentManager = messenger.CreateAttachmentManagerForMessage(savedMessage);
 
             attachmentManager.AddAttachmentFile(file);
             attachmentManager.PreCreateAllAttachments();
             attachmentManager.UploadAllAttachments();
 
-            message = messenger.SaveMessage(message);
-            messenger.SendMessage(message);
+            savedMessage = messenger.SaveMessage(savedMessage);
+            messenger.SendMessage(savedMessage);
 
         }
 
@@ -113,9 +113,9 @@ namespace CSharpMessengerTests
             message.Body = "Hello Test Message From DeliverySlip C# Example";
             message.BodyFormat = BodyFormatEnum.Text;
 
-            message = messenger.SaveMessage(message);
+            SavedMessage savedMessage = messenger.SaveMessage(message);
 
-            AttachmentManager attachmentManager = new AttachmentManager(message, session);
+            AttachmentManager attachmentManager = new AttachmentManager(savedMessage, session);
 
             var projectPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
             string filePath = Path.Combine(projectPath, "Resources");
@@ -125,8 +125,8 @@ namespace CSharpMessengerTests
             attachmentManager.PreCreateAllAttachments();
             attachmentManager.UploadAllAttachments();
 
-            message = messenger.SaveMessage(message);
-            messenger.SendMessage(message);
+            savedMessage = messenger.SaveMessage(savedMessage);
+            messenger.SendMessage(savedMessage);
 
         }
 
