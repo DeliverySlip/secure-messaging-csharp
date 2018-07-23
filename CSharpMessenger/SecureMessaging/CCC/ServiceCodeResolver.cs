@@ -20,6 +20,12 @@ namespace SecureMessaging.CCC
 			ServiceCodeResolver.cccApiBaseUrl = resolveURL;
 		}
 
+        /// <summary>
+        /// Resolve executes the resolving of the passed in serviceCode to matching messaging api. It uses the
+        /// CCC to search for the passed in service code and returns the Secure Messaging API base url
+        /// </summary>
+        /// <param name="serviceCode">The servicecode of the service being resolved</param>
+        /// <returns></returns>
 		public static String Resolve(String serviceCode)
 		{
 			var client = new JsonServiceClient(ServiceCodeResolver.cccApiBaseUrl);

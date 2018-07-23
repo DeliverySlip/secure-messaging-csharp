@@ -64,6 +64,10 @@ namespace SecureMessaging
             this.client = session.Client;
         }
 
+        /// <summary>
+        /// SetClientName sets the client identification name for the Secure Messaging API
+        /// </summary>
+        /// <param name="clientName">The name passed to the API identifying this client</param>
         public void SetClientName(String clientName)
         {
 
@@ -77,6 +81,11 @@ namespace SecureMessaging
             
         }
 
+        /// <summary>
+        /// SetClientVersion sets the clients version for the Secure Messaging API
+        /// </summary>
+        /// <param name="clientVersion">The version passed ot the API identifying the
+        /// client</param>
         public void SetClientVersion(String clientVersion)
         {
             if(this.Session == null)
@@ -101,6 +110,11 @@ namespace SecureMessaging
 			this.Session = SessionFactory.CreateSession(credentials, this.client);
         }
 
+        /// <summary>
+        /// Logout of the Secure Messaging API. This simply terminates your session with the
+        /// API. All sessions expire automatically from the server side. This is a helper
+        /// method to explicitly terminate the session
+        /// </summary>
 		public void Logout()
 		{
 			var resp = this.Session.Client.Post(new Logout() { });
@@ -108,11 +122,25 @@ namespace SecureMessaging
 			this.Session.Client.Headers.Remove("x-sm-session-token");
 		}
 
+        /// <summary>
+        /// CreateAttachmentManagerForMessage instantiates an AttachmentManager for the
+        /// passed in SavedMessage
+        /// </summary>
+        /// <param name="savedMessage">The saved message which an attachment
+        /// manager is being created for</param>
+        /// <returns></returns>
         public AttachmentManager CreateAttachmentManagerForMessage(SavedMessage savedMessage)
         {
             return new AttachmentManager(savedMessage, this.Session);
         }
 
+        /// <summary>
+        /// CreateAttachmentManagerForMessage instatiates an AttachmentManager for the
+        /// passed in Message
+        /// </summary>
+        /// <param name="message">The message which an attachment manager is being
+        /// created for</param>
+        /// <returns></returns>
         public AttachmentManager CreateAttachmentManagerForMessage(Message message)
         {
             return new AttachmentManager(message, this.Session);
@@ -166,6 +194,12 @@ namespace SecureMessaging
 			return message;
 		}
 
+        /// <summary>
+        /// Ping is a helper method for Pinging the Messaging API. This is primarily a debugging call
+        /// but can be used to determine if the Messaging API is currently up and running, aswell
+        /// as retrieve additional meta information about the API
+        /// </summary>
+        /// <returns></returns>
 		public PingResponse Ping()
 		{
 			var req = new Ping();
@@ -174,11 +208,22 @@ namespace SecureMessaging
 			return response;
 		}
 
+        /// <summary>
+        /// SaveMessage resaves the passed in SavedMessage
+        /// </summary>
+        /// <param name="savedMessage"></param>
+        /// <returns></returns>
         public SavedMessage SaveMessage(SavedMessage savedMessage)
         {
             return this.SaveMessage(savedMessage.Message);
         }
 
+        /// <summary>
+        /// SaveMessage saves the passed in message. This is mandatory before sending a message and
+        /// is recommended before uploading any attachments
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
 		public SavedMessage SaveMessage(Message message)
 		{
 
@@ -212,6 +257,11 @@ namespace SecureMessaging
 
 		}
 
+        /// <summary>
+        /// SendMessage sends the passed in SavedMessage
+        /// </summary>
+        /// <param name="savedMessage">A message that has been saved already</param>
+        /// <returns></returns>
 		public Message SendMessage(SavedMessage savedMessage)
 		{
 
@@ -233,6 +283,15 @@ namespace SecureMessaging
 
 		}
 
+        /// <summary>
+        /// UploadAttachmentsForMessage is a helper method which uploads the passed in list of 
+        /// FileInfo attachments to the passed in SavedMessage. This method does not return until
+        /// all attachments have been uploaded. For more control of attachment uploads, use the
+        /// AttachmentManager
+        /// </summary>
+        /// <param name="savedMessage">The already saved message the attachments belong to</param>
+        /// <param name="attachments">A list of attachments to be uploaded to the message</param>
+        /// <returns></returns>
 		public Message UploadAttachmentsForMessage(SavedMessage savedMessage, IEnumerable<FileInfo> attachments)
 		{
 
@@ -252,6 +311,7 @@ namespace SecureMessaging
             return savedMessage.Message;
 
  		}
+
 
 		public void DownloadAttachment(Guid attachmentGuid, String localFolderPath = null, bool? preview = null, String downloadType = null, String downloadFileType = null)
 		{
@@ -273,6 +333,12 @@ namespace SecureMessaging
 			File.WriteAllBytes(string.Format("{0}/{1}", localFolderPath, localFileName), bytes);
 		}
 
+        /// <summary>
+        /// Sets the passed in extensions for the passed in message
+        /// </summary>
+        /// <param name="message">The message the extensions are being applied to</param>
+        /// <param name="extensions">The extensions being applied to the message</param>
+        /// <returns></returns>
 		public Message SetMessageExtensions(Message message, List<Extension> extensions)
 		{
 			var req = new SetMessageExtensions()
@@ -287,6 +353,11 @@ namespace SecureMessaging
 			return message;
 		}
 
+        /// <summary>
+        /// SearchMessages takes the passed in filter and searches for all messages matching.
+        /// </summary>
+        /// <param name="searchMessageFilter">Filter with search parameters</param>
+        /// <returns></returns>
         public SearchMessagesResults SearchMessages(SearchMessagesFilter searchMessageFilter)
         {
 
@@ -336,6 +407,14 @@ namespace SecureMessaging
 			return messageSummaries;
 		}
 
+        /// <summary>
+        /// GetMessage fetches a single message from the API. Optional parameters allow retrieval of the
+        /// body of the message and the password if the message has FYEO enabled
+        /// </summary>
+        /// <param name="messageGuid">ID of the message being fetched</param>
+        /// <param name="retrieveBody">Whether to retrieve the body of the message or not</param>
+        /// <param name="password">The password, if this message has FYEO or Confidential enabled</param>
+        /// <returns></returns>
         public Message GetMessage(Guid messageGuid, bool retrieveBody = true, String password = null)
 		{
 			GetMessageMutex.WaitOne();

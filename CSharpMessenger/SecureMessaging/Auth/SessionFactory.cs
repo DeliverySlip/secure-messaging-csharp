@@ -10,7 +10,13 @@ namespace SecureMessaging.Auth
 {
 	public class SessionFactory
 	{
-
+        /// <summary>
+        /// CreateSession creates a session on the Secure Messaging Api using the MessagingApiClient
+        /// to define where and the Credentials to define authentication
+        /// </summary>
+        /// <param name="credentials"></param>
+        /// <param name="client"></param>
+        /// <returns></returns>
         public static Session CreateSession(Credentials credentials, MessagingApiClient client)
         {
             //JsonServiceClient client = messenger.GetClient();
@@ -70,6 +76,8 @@ namespace SecureMessaging.Auth
             }
         }
 
+        [Obsolete("CreateSession with the JsonServiceClient is no longer supported. Use MessagingApiClient overload instead." +
+            "Method will be removed in version 4.0.0 release")]
 		public static Session CreateSession(Credentials credentials, JsonServiceClient client)
 		{
 			if (credentials.GetCredentialsType() == Credentials.CredentialsTypeEnum.UsernamePassword)

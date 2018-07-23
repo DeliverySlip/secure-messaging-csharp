@@ -17,9 +17,6 @@ namespace SecureMessaging.Search
         private int pageSize;
 
         private SearchMessagesFilter searchMessageFilter;
-
-        
-
         private List<MessageSummary> localMessageStore = new List<MessageSummary>();
         private JsonServiceClient client;
 
@@ -30,6 +27,7 @@ namespace SecureMessaging.Search
                 return count;
             }
         }
+
 
         public SearchMessagesResults(SearchMessagesPagedResponse initialData, SearchMessagesFilter searchMessageFilter, JsonServiceClient client)
         {
@@ -42,6 +40,10 @@ namespace SecureMessaging.Search
             localMessageStore.AddRange(initialData.Results);
         }
 
+        /// <summary>
+        /// LoadNextPageOfDataIntoLocalList fetches the next page of data from the API and caches it localy
+        /// so that it can be retrieved by the client
+        /// </summary>
         private void LoadNextPageOfDataIntoLocalList()
         {
             this.currentPage++;
@@ -67,7 +69,10 @@ namespace SecureMessaging.Search
             throw new NotImplementedException();
         }
 
-
+        /// <summary>
+        /// SearchMessageResultsIterator handles iterating through the search
+        /// results returned by the Secure Messaging API
+        /// </summary>
         private class SearchMessageResultsIterator : IEnumerator<MessageSummary>
         {
             private int index = 0;

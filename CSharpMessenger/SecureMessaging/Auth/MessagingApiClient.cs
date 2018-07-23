@@ -9,6 +9,12 @@ using System.Threading.Tasks;
 
 namespace SecureMessaging.Auth
 {
+    /// <summary>
+    /// MessagingApiClient is a wrapper of the JsonServiceClient but tailored
+    /// to work with the SDK. This primarily includes configuration of the
+    /// JsonServiceClient for the SecureMessagingAPI and adding functionality
+    /// for configuring the client name and version headers
+    /// </summary>
     public class MessagingApiClient : JsonServiceClient
     {
         private String ClientName = "secure-messenger-csharp";
