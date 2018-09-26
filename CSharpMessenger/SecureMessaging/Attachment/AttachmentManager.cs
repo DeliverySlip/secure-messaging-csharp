@@ -68,6 +68,7 @@ namespace SecureMessaging.Attachment
             request.MessageGuid = this.message.MessageGuid;
 
             this.preCreateAttatchmentsResponse = client.Post(request);
+            this.attachmentsHaveBeenPreCreated = true;
 
         }
 

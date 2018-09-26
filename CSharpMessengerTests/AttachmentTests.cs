@@ -21,6 +21,39 @@ namespace CSharpMessengerTests
         }
 
         [TestMethod]
+        public void TestSendMultipleAttachmentsMessengerWorkflow()
+        {
+
+            SecureMessenger messenger = SecureMessenger.ResolveFromServiceCode(ServiceCode);
+            Credentials credentials = new Credentials(Username, Password);
+            messenger.Login(credentials);
+
+            PreCreateConfiguration configuration = new PreCreateConfiguration();
+            configuration.SetActionCode(ActionCodeEnum.New);
+            Message message = messenger.PreCreateMessage(configuration);
+
+            message.To = new List<String>()
+            {
+                RecipientEmail
+            };
+            message.Subject = "DeliverySlip C# Example";
+            message.Body = "Hello Test Message From DeliverySlip C# Example";
+            message.BodyFormat = BodyFormatEnum.Text;
+
+            SavedMessage savedMessage = messenger.SaveMessage(message);
+
+            var projectPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
+            string filePath = Path.Combine(projectPath, "Resources");
+            FileInfo file = new FileInfo(filePath + "/yellow.jpg");
+
+            messenger.UploadAttachmentsForMessage(savedMessage, new List<FileInfo>() { file, file, file });
+
+            savedMessage = messenger.SaveMessage(savedMessage);
+            messenger.SendMessage(savedMessage);
+
+        }
+
+        [TestMethod]
         public void TestSendAttachmentMessengerWorkflow()
         {
 
