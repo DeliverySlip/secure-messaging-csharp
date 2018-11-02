@@ -52,7 +52,7 @@ namespace SecureMessaging.Auth
         {
             global::ServiceStack.Text.JsConfig.DateHandler = global::ServiceStack.Text.DateHandler.ISO8601;
             global::ServiceStack.Text.JsConfig.AssumeUtc = true;
-            global::ServiceStack.Text.JsConfig.AppendUtcOffset = false;
+            //global::ServiceStack.Text.JsConfig.AppendUtcOffset = false; - not supported in powershell, maybe not anymore in ServiceStack ?
 
             Headers.Add("x-sm-client-name", ClientName);
             Headers.Add("x-sm-client-version", ClientVersion);

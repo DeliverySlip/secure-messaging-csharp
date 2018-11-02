@@ -5,6 +5,9 @@ looking for guidelines on how to use the DeliverySlip API.
 
 The SDK is being expanded to eventually encompass all features offered by the Secure Messaging API
 
+The C# Sample SDK also includes bindings for working with the Seucre Messaging API via Powershell bindings.
+See `Setup` for instructions on using Powershell with the Secure Messaging API
+
 # Prerequisites
 The project has been soley developed on Windows and for Visual Studio. It is recommended you have
 at mimum Visual Studio Community 2015 installed on a Windows machine.
@@ -12,6 +15,45 @@ at mimum Visual Studio Community 2015 installed on a Windows machine.
 # Setup
 Compile the project simply by opening the solution file in Visual Studio and building from there. The
 binaries will then be compiled into the `bin` folder at the project root
+
+## Powershell
+The Secure Messaging C# SDK includes bindings for working with the API in Powershell 5. Powershell
+functionality is a very minimal subset of functionality offered by the C# SDK. Like the C# SDK, the 
+best way to compile the Powershell bindings is by opening the project within Visual Studio and then building
+the `SecureMessaging.Powershell` project. The output binaries will then be located in the `bin` folder. From
+within the `bin` folder execute the following commands in powershell to import the cmdlets into powershell.
+Powershell may need to be running as an administrator:
+
+```powershell
+PS C:\> Import-Module ./SecureMessaging.Powershell.dll
+```
+You can then view all modules available with the following command:
+```powershell
+PS C:\> Get-Commands -module SecureMessaging.Powershell
+```
+You can display the included help with each module with the `Get-Help` cmdlet:
+```powershell
+PS C:\> Get-Help Get-LoginSession
+```
+
+Powershell support is still in beta and works for most basic configurations. A key cause of issues is if
+you have the appropriate Powershell version. You can check your powershell version by exeucting the following
+command:
+```powershell
+PS C:\> $PSVersionTable.PSVersion
+```
+Ensure that the `Major` column is 5
+
+### Cmdlet Overview
+* Get-LoginSession - Login and create a session with the messaging API. The returned Session object is used by all other commands
+* Get-Message - Get a specific message by message guid - includes the message body
+* New-Message - PreCreates a new message. The returned Message object can be edited to configure the message
+* New-SavedMessage - Saves the message for sending. The returned SavedMessage is required for sending the message
+* New-SentMessage - Sends the passed in SavedMessage object. Returns the original message
+* New-MessageAttachment - Adds an array of attachments to a Message object. SavedMessage is not accepted
+* New-SearchMessageFilter - Generates a SearchMessageFilter for searching for messages
+* New-SearchMessage - Executes a SearchMessage, returns an array of MessageSummary objects - does not include the message body
+
 
 # Usage
 For examples on how to use the supported features in the C# SDK, see the `CSharpMessengerTests` project. The
