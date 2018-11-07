@@ -37,6 +37,7 @@ namespace SecureMessaging.Powershell
 
             Credentials credentials = new Credentials(Username, Password);
             MessagingApiClient client = MessagingApiClient.GetInstanceViaServiceCode(ServiceCode);
+            client.SetClientName("secure-messenger-csharp-powershell");
 
             Session session = SessionFactory.CreateSession(credentials, client);
            
